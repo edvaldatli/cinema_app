@@ -10,7 +10,8 @@ class Theater{
   static List<Theater> theaters = [
     Theater(id: '1', title: 'Borg' ,seats: 150),
     Theater(id: '2', title: 'Litli Salur',seats: 278),
-    Theater(id: '3', title: 'Stóri Salur', seats: 310)
+    Theater(id: '3', title: 'Stóri Salur', seats: 310),
+    Theater(id: '4', title: 'Lúxus Salur', seats: 96)
   ];
 
   static List<Theater> getAllTheaters(){
