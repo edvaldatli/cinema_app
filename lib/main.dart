@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import 'models/movie_model.dart';
 import 'models/theater_model.dart';
@@ -14,9 +15,9 @@ final ThemeData darkTheme = ThemeData(
   primarySwatch: Colors.blue,
 );
 
-
 _showTicketBoughtNotification(BuildContext context) {
   final snackBar = SnackBar(
+    backgroundColor: Colors.green,
     content: Text('Ticket purchased successfully!'),
     duration: Duration(seconds: 3),
     action: SnackBarAction(
@@ -31,15 +32,9 @@ _showTicketBoughtNotification(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
-
 void _handleTicketPurchase(BuildContext context) {
-  // Handle the purchase...
-
-  // Show the notification
   _showTicketBoughtNotification(context);
 }
-
-
 
 void _showBookingModal(
     BuildContext context, String movieTitle, String showTime, String theater) {
@@ -64,11 +59,14 @@ void _showBookingModal(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green)),
                   onPressed: () {
                     _handleTicketPurchase(context);
                     Navigator.pop(context); // Close the modal
                   },
-                  child: Text('Confirm'),
+                  child: Text('Book'),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -143,8 +141,9 @@ class MovieListScreen extends StatelessWidget {
   Column MovieItem(int index) {
     return Column(
       children: [
-        Expanded(
-          child: Image.network(allMovies[index].imgURL, fit: BoxFit.cover),
+        Container(
+          child: Image.network(allMovies[index].imgURL,
+              fit: BoxFit.cover, height: 200),
         ),
         SizedBox(height: 4.0),
         Text(
@@ -169,85 +168,139 @@ class MovieDetailScreen extends StatelessWidget {
         allShows.where((show) => show.movie.id == movie.id).toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text(movie.title)), // Optional
+      appBar: AppBar(title: Text(movie.title)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Align items to the start
-          children: [
-            // Top section with image and title
-            MovieHeader(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Showtimes",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            // Assuming movieShows is a list of your movie showtimes.
-            // This is for your grid section.
-            ShowTimeButtons(movieShows),
-            SizedBox(height: 24.0), // Some spacing
-            // Movie details section
-            Text(
-              movie
-                  .description, // Assuming your Movie class has a 'description' field
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 24.0), // Some spacing
-            // Trailer section (consider using a plugin/package to embed videos)
-            Text("Trailer:",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            // Embed the video player here
-          ],
+        child: SingleChildScrollView(
+          child: MovieDetailContainer(movieShows),
         ),
       ),
     );
   }
 
-  Container ShowTimeButtons(List<Show> movieShows) {
-    return Container(
-      height: 120,
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 6.0,
-        ),
-        itemCount: movieShows.length,
-        itemBuilder: (context, index) {
-          return ElevatedButton(
-            onPressed: () {
-              _showBookingModal(
-                  context,
-                  movieShows[index].movie.title,
-                  DateFormat('HH:mm').format(movieShows[index].showTime),
-                  movieShows[index].theater.title);
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.black87),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-              Text(
-                DateFormat('HH:mm').format(movieShows[index].showTime),
-                style: TextStyle(fontSize: 22)),
-              Text(
-                movieShows[index].theater.title,
+  Column MovieDetailContainer(List<Show> movieShows) {
+    return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top section with image and title
+            MovieHeader(),
+            const SizedBox(height: 24),
+
+            if(movieShows.isEmpty == false) 
+              ShowtimeContainer(movieShows)
+            else
+              const Text(
+                'No shows are currently scheduled',
                 style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white54
+                  fontSize: 22,
                 )
-              )
-            ]),
-          );
-        },
-      ),
-    );
+              ),
+
+            const SizedBox(height: 24.0),
+            AboutContainer(),
+            const SizedBox(height: 24.0),
+            TrailerContainer(),
+          ],
+        );
+  }
+
+  Column TrailerContainer() {
+    return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Trailer:",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                YoutubePlayer(
+                  controller: YoutubePlayerController(
+                    initialVideoId: movie.trailerURL,
+                    flags: const YoutubePlayerFlags(
+                      autoPlay: false,
+                      mute: false,
+                    ),
+                  ),
+                ),
+              ],
+            );
+  }
+
+  Column AboutContainer() {
+    return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'About:',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  movie
+                      .description,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ],
+            );
+  }
+
+  Column ShowtimeContainer(List<Show> movieShows) {
+    return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Showtimes:',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  )
+                ),
+                SizedBox(height: 8,),
+                Container(
+                  height: 120,
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 3,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 6.0,
+                    ),
+                    itemCount: movieShows.length,
+                    itemBuilder: (context, index) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          _showBookingModal(
+                              context,
+                              movieShows[index].movie.title,
+                              DateFormat('HH:mm')
+                                  .format(movieShows[index].showTime),
+                              movieShows[index].theater.title);
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.black87),
+                        ),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                  DateFormat('HH:mm')
+                                      .format(movieShows[index].showTime),
+                                  style: TextStyle(fontSize: 22)),
+                              Text(movieShows[index].theater.title,
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.white54))
+                            ]),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
   }
 
   Row MovieHeader() {
@@ -277,6 +330,18 @@ class MovieDetailScreen extends StatelessWidget {
                 "${movie.runTime.toString()} minutes",
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset('assets/icons/imdb-icon.png', height: 30),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      movie.rating.toString(),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600])
+                    ),
+                  )
+                ],)
             ],
           ),
         ),
