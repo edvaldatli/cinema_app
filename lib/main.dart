@@ -95,6 +95,7 @@ class CinemaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Cinema App',
       theme: darkTheme,
       home: MovieListScreen(),
@@ -180,127 +181,122 @@ class MovieDetailScreen extends StatelessWidget {
 
   Column MovieDetailContainer(List<Show> movieShows) {
     return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top section with image and title
-            MovieHeader(),
-            const SizedBox(height: 24),
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Top section with image and title
+        MovieHeader(),
+        const SizedBox(height: 24),
 
-            if(movieShows.isEmpty == false) 
-              ShowtimeContainer(movieShows)
-            else
-              const Text(
-                'No shows are currently scheduled',
-                style: TextStyle(
-                  fontSize: 22,
-                )
-              ),
+        if (movieShows.isEmpty == false)
+          ShowtimeContainer(movieShows)
+        else
+          const Text('No shows are currently scheduled',
+              style: TextStyle(
+                fontSize: 22,
+              )),
 
-            const SizedBox(height: 24.0),
-            AboutContainer(),
-            const SizedBox(height: 24.0),
-            TrailerContainer(),
-          ],
-        );
+        const SizedBox(height: 24.0),
+        AboutContainer(),
+        const SizedBox(height: 24.0),
+        TrailerContainer(),
+      ],
+    );
   }
 
   Column TrailerContainer() {
     return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Trailer:",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 10),
-                YoutubePlayer(
-                  controller: YoutubePlayerController(
-                    initialVideoId: movie.trailerURL,
-                    flags: const YoutubePlayerFlags(
-                      autoPlay: false,
-                      mute: false,
-                    ),
-                  ),
-                ),
-              ],
-            );
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Trailer:",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 10),
+        YoutubePlayer(
+          controller: YoutubePlayerController(
+            initialVideoId: movie.trailerURL,
+            flags: const YoutubePlayerFlags(
+              autoPlay: false,
+              mute: false,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Column AboutContainer() {
     return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'About:',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  movie
-                      .description,
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ],
-            );
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'About:',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          movie.description,
+          style: const TextStyle(fontSize: 18),
+        ),
+      ],
+    );
   }
 
   Column ShowtimeContainer(List<Show> movieShows) {
     return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Showtimes:',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  )
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Showtimes:',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            )),
+        SizedBox(
+          height: 8,
+        ),
+        Container(
+          height: 120,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 3,
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 6.0,
+            ),
+            itemCount: movieShows.length,
+            itemBuilder: (context, index) {
+              return ElevatedButton(
+                onPressed: () {
+                  _showBookingModal(
+                      context,
+                      movieShows[index].movie.title,
+                      DateFormat('HH:mm').format(movieShows[index].showTime),
+                      movieShows[index].theater.title);
+                },
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.black87),
                 ),
-                SizedBox(height: 8,),
-                Container(
-                  height: 120,
-                  child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 3,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 6.0,
-                    ),
-                    itemCount: movieShows.length,
-                    itemBuilder: (context, index) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          _showBookingModal(
-                              context,
-                              movieShows[index].movie.title,
-                              DateFormat('HH:mm')
-                                  .format(movieShows[index].showTime),
-                              movieShows[index].theater.title);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black87),
-                        ),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                  DateFormat('HH:mm')
-                                      .format(movieShows[index].showTime),
-                                  style: TextStyle(fontSize: 22)),
-                              Text(movieShows[index].theater.title,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.white54))
-                            ]),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                          DateFormat('HH:mm')
+                              .format(movieShows[index].showTime),
+                          style: TextStyle(fontSize: 22)),
+                      Text(movieShows[index].theater.title,
+                          style: TextStyle(fontSize: 12, color: Colors.white54))
+                    ]),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Row MovieHeader() {
@@ -336,12 +332,12 @@ class MovieDetailScreen extends StatelessWidget {
                   Image.asset('assets/icons/imdb-icon.png', height: 30),
                   Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Text(
-                      movie.rating.toString(),
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600])
-                    ),
+                    child: Text(movie.rating.toString(),
+                        style:
+                            TextStyle(fontSize: 16, color: Colors.grey[600])),
                   )
-                ],)
+                ],
+              )
             ],
           ),
         ),
