@@ -5,6 +5,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'models/movie_model.dart';
 import 'models/theater_model.dart';
 import 'models/shows_model.dart';
+import 'models/reviews_model.dart';
 
 void main() {
   runApp(CinemaApp());
@@ -18,8 +19,8 @@ final ThemeData darkTheme = ThemeData(
 _showTicketBoughtNotification(BuildContext context) {
   final snackBar = SnackBar(
     backgroundColor: Colors.green,
-    content: Text('Ticket purchased successfully!'),
-    duration: Duration(seconds: 3),
+    content: const Text('Ticket purchased successfully!'),
+    duration: const Duration(seconds: 3),
     action: SnackBarAction(
       label: 'Close',
       onPressed: () {
@@ -42,19 +43,20 @@ void _showBookingModal(
     context: context,
     builder: (BuildContext context) {
       return Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min, // To wrap the content's height
           children: [
             Text(
               movieTitle,
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text('Time: $showTime'),
             Text('Theater: $theater'),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -66,7 +68,7 @@ void _showBookingModal(
                     _handleTicketPurchase(context);
                     Navigator.pop(context); // Close the modal
                   },
-                  child: Text('Book'),
+                  child: const Text('Book'),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -76,7 +78,7 @@ void _showBookingModal(
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red, // Color for the cancel button
                   ),
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
               ],
             )
@@ -114,7 +116,7 @@ class MovieListScreen extends StatelessWidget {
 
   GridView MovieList() {
     return GridView.builder(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       itemCount: allMovies.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -146,10 +148,10 @@ class MovieListScreen extends StatelessWidget {
           child: Image.network(allMovies[index].imgURL,
               fit: BoxFit.cover, height: 200),
         ),
-        SizedBox(height: 4.0),
+        const SizedBox(height: 4.0),
         Text(
           allMovies[index].title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         Text(allMovies[index].genre)
@@ -180,6 +182,7 @@ class MovieDetailScreen extends StatelessWidget {
   }
 
   Column MovieDetailContainer(List<Show> movieShows) {
+    final movieReviews = Review.fetchReviewFromMovieId(movie.id);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,6 +203,73 @@ class MovieDetailScreen extends StatelessWidget {
         AboutContainer(),
         const SizedBox(height: 24.0),
         TrailerContainer(),
+        const SizedBox(height: 24.0),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Reviews:',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Container(
+              height: 200,
+              padding: const EdgeInsets.all(10),
+              margin: const EdgeInsets.only(right: 20),
+              decoration: BoxDecoration(
+                color: Colors.grey[1000],
+              ),
+              child: Expanded(
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: movieReviews.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: 170, // width of individual review container
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.only(right: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[1000],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${movieReviews[index].author}',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text(
+                                  'Rating: 6.5',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '${movieReviews[index].body}',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 5,
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      );
+                    }),
+              ),
+            )
+          ],
+        )
       ],
     );
   }
@@ -248,13 +318,13 @@ class MovieDetailScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Showtimes:',
+        const Text('Showtimes:',
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
             )),
-        SizedBox(
+        const SizedBox(
           height: 8,
         ),
         Container(
@@ -287,9 +357,10 @@ class MovieDetailScreen extends StatelessWidget {
                       Text(
                           DateFormat('HH:mm')
                               .format(movieShows[index].showTime),
-                          style: TextStyle(fontSize: 22)),
+                          style: const TextStyle(fontSize: 22)),
                       Text(movieShows[index].theater.title,
-                          style: TextStyle(fontSize: 12, color: Colors.white54))
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.white54))
                     ]),
               );
             },
@@ -307,21 +378,22 @@ class MovieDetailScreen extends StatelessWidget {
           width: 120,
           fit: BoxFit.cover,
         ),
-        SizedBox(width: 12.0),
+        const SizedBox(width: 12.0),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 movie.title,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 6.0),
+              const SizedBox(height: 6.0),
               Text(
                 movie.genre,
                 style: TextStyle(fontSize: 18, color: Colors.grey[600]),
               ),
-              SizedBox(height: 6.0),
+              const SizedBox(height: 6.0),
               Text(
                 "${movie.runTime.toString()} minutes",
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),

@@ -1,5 +1,5 @@
 class Movie {
-  final int id;
+  final String id;
   final String title;
   final String genre;
   final String ageRestriction;
@@ -23,7 +23,7 @@ class Movie {
 
   static List<Movie> movies = [
     Movie(
-        id: 1,
+        id: '1',
         title: 'Interstellar',
         ageRestriction: '12',
         imgURL:
@@ -35,7 +35,7 @@ class Movie {
         trailerURL: 'zSWdZVtXT7E',
         rating: 8.7),
     Movie(
-        id: 2,
+        id: '2',
         title: 'Inception',
         ageRestriction: '12',
         imgURL:
@@ -47,7 +47,7 @@ class Movie {
         trailerURL: '5EiV_HXIIGs',
         rating: 8.8),
     Movie(
-        id: 3,
+        id: '3',
         title: 'Mission Impossible: Dead Reckoning',
         ageRestriction: '12',
         imgURL:
@@ -59,7 +59,7 @@ class Movie {
         trailerURL: 'avz06PDqDbM',
         rating: 7.8),
     Movie(
-        id: 4,
+        id: '4',
         title: 'Mamma Mia!',
         ageRestriction: '3',
         imgURL:
@@ -71,7 +71,7 @@ class Movie {
         trailerURL: '8RBNHdG35WY',
         rating: 6.5),
     Movie(
-        id: 5,
+        id: '5',
         title: 'The Nun II',
         ageRestriction: '16',
         imgURL:
@@ -83,7 +83,7 @@ class Movie {
         trailerURL: 'QF-oyCwaArU',
         rating: 5.7),
     Movie(
-        id: 5,
+        id: '6',
         title: 'Gran Turismo',
         ageRestriction: '3',
         imgURL:

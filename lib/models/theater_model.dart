@@ -1,5 +1,3 @@
-import 'movie_model.dart';
-
 class Theater{
   final String id;
   final String title;
