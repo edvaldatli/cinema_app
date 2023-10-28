@@ -145,8 +145,11 @@ class MovieListScreen extends StatelessWidget {
     return Column(
       children: [
         Container(
-          child: Image.network(allMovies[index].imgURL,
-              fit: BoxFit.cover, height: 200),
+          child: Hero(
+            tag: 'movie-image-${allMovies[index].id}',
+            child: Image.network(allMovies[index].imgURL,
+                fit: BoxFit.cover, height: 200),
+          ),
         ),
         const SizedBox(height: 4.0),
         Text(
@@ -204,71 +207,75 @@ class MovieDetailScreen extends StatelessWidget {
         const SizedBox(height: 24.0),
         TrailerContainer(),
         const SizedBox(height: 24.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Reviews:',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Container(
-              height: 200,
-              padding: const EdgeInsets.all(10),
-              margin: const EdgeInsets.only(right: 20),
-              decoration: BoxDecoration(
-                color: Colors.grey[1000],
-              ),
-              child: Expanded(
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: movieReviews.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: 170, // width of individual review container
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.only(right: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[1000],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+        //ReviewContainer(movieReviews)
+      ],
+    );
+  }
+
+  Column ReviewContainer(List<Review> movieReviews) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Reviews:',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Container(
+          height: 200,
+          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.only(right: 20),
+          decoration: BoxDecoration(
+            color: Colors.grey[1000],
+          ),
+          child: Expanded(
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: movieReviews.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 170, // width of individual review container
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(right: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[1000],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '${movieReviews[index].author}',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const Text(
-                                  'Rating: 6.5',
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
                             Text(
-                              '${movieReviews[index].body}',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 5,
+                              '${movieReviews[index].author}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            const SizedBox(height: 8),
+                            const Text(
+                              'Rating: 6.5',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
                           ],
                         ),
-                      );
-                    }),
-              ),
-            )
-          ],
+                        const SizedBox(height: 6),
+                        Text(
+                          '${movieReviews[index].body}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 5,
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  );
+                }),
+          ),
         )
       ],
     );
@@ -373,10 +380,13 @@ class MovieDetailScreen extends StatelessWidget {
   Row MovieHeader() {
     return Row(
       children: [
-        Image.network(
-          movie.imgURL,
-          width: 120,
-          fit: BoxFit.cover,
+        Hero(
+          tag: 'movie-image-${movie.id}',
+          child: Image.network(
+            movie.imgURL,
+            width: 120,
+            fit: BoxFit.cover,
+          ),
         ),
         const SizedBox(width: 12.0),
         Expanded(
