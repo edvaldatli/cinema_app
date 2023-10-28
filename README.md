@@ -4,4 +4,4 @@ A Flutter project that represents a Cinema theater
 
 ## Video of the app
 
-https://github.com/edvaldatli/cinema_app/assets/10516151/4e4469f7-b974-4289-8e00-475eefd833b5
+https://github.com/edvaldatli/cinema_app/assets/10516151/12956746-1cf7-47d0-aaf4-a0fe357f22c1
