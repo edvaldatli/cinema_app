@@ -24,7 +24,6 @@ _showTicketBoughtNotification(BuildContext context) {
     action: SnackBarAction(
       label: 'Close',
       onPressed: () {
-        // This will hide the current SnackBar.
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       },
     ),
@@ -46,7 +45,7 @@ void _showBookingModal(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min, // To wrap the content's height
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               movieTitle,
@@ -66,17 +65,17 @@ void _showBookingModal(
                           MaterialStateProperty.all<Color>(Colors.green)),
                   onPressed: () {
                     _handleTicketPurchase(context);
-                    Navigator.pop(context); // Close the modal
+                    Navigator.pop(context);
                   },
                   child: const Text('Book'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // Handle cancellation
-                    Navigator.pop(context); // Close the modal
+                    Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.red, // Color for the cancel button
+                    backgroundColor: Colors.red,
                   ),
                   child: const Text('Cancel'),
                 ),
@@ -207,7 +206,7 @@ class MovieDetailScreen extends StatelessWidget {
         const SizedBox(height: 24.0),
         TrailerContainer(),
         const SizedBox(height: 24.0),
-        //ReviewContainer(movieReviews)
+        ReviewContainer(movieReviews)
       ],
     );
   }
@@ -230,14 +229,14 @@ class MovieDetailScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.grey[1000],
           ),
-          child: Expanded(
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: movieReviews.length,
                 itemBuilder: (context, index) {
                   return Container(
-                    width: 170, // width of individual review container
-                    padding: const EdgeInsets.all(10),
+                    width: 210,
+                    height: 400,
+                    padding: const EdgeInsets.all(3),
                     margin: const EdgeInsets.only(right: 20),
                     decoration: BoxDecoration(
                       color: Colors.grey[1000],
@@ -248,11 +247,15 @@ class MovieDetailScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '${movieReviews[index].author}',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Text(
+                                '${movieReviews[index].author}',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const Text(
@@ -276,7 +279,7 @@ class MovieDetailScreen extends StatelessWidget {
                   );
                 }),
           ),
-        )
+        
       ],
     );
   }
